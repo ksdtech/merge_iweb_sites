@@ -122,7 +122,6 @@ END_FEED
           copy_page(sub_dir, feed_dir, page)
           # put home feed entry first
           first_entry = @nav_feed.root.at('entry')
-          puts "found an entry" if first_entry
           if is_home_dir && first_entry
             first_entry.before(entry)
           else
