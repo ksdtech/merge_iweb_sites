@@ -1,0 +1,85 @@
+merge_iweb_sites
+
+Script to merge a classroom set of published iWeb '09 sites into one site.
+
+Steps:
+
+1. Start with a collection of iWeb '09 .sites2 "domain" files made by
+ students. Rename each student's Domain.sites2 file so that it
+ is uniquely named. 
+ 
+2. Create a folder somewhere on your computer (I recommend within the "Sites"
+ folder of your home directory) to hold the published individual websites 
+ that will be merged. We will call this the "published" folder.
+
+3. Start iWeb '09 by holding down the Option key, choose "Create a new
+ domain", and specify a place to save the .sites2 domain file. 
+ Choose a theme, and set the publishing settings to "Local Folder".
+ Name the site with the teacher's name, and put the teacher's email 
+ address in the contact box. Rename the single page in the site 
+ "Home" and make a nice welcome page. Create a subfolder within the 
+ "published" folder with the teacher's name, like "jsterling", and 
+ publish the entire site to this folder. When publishing, set the site's 
+ root URL to something like this:
+ 
+http://kentweb.kentfieldschools.org/teacherweb/jsterling/missions2011
+ 
+4. Close the project, rename the Domain.sites2 file with the teacher's name,
+ like "jsterling.sites2" and keep it for future edits with the students' 
+ .sites2 files.
+
+5. Open each individual student's .sites2 file by double-clicking.  Make
+ sure that the names of the pages within all of the .sites2 projects
+ are distinct--for a website on the missions, for example, name each
+ page with the name of the mission. Then publish each entire site into a 
+ new subfolder of the "published" folder named after the student.
+
+Your "published" folder should look something like this:
+
+Your Home Folder
+  Sites
+    missions2011 <- This is the "published" folder
+      jsterling <- This is the folder to publish teacher site to
+        index.html
+        jsterling
+          feed.xml
+          Home_files <- These "pages" must have unique names
+          Home.html  <- These "pages" must have unique names
+          index.html
+          Media
+          Scripts
+      calvin <- This is the folder to publish a student site to
+        index.html
+        calvin <- This is the site name in iWeb
+          feed.xml
+          San_Francisco_Solano_files <- These "pages" must have unique names
+          San_Francisco_Solano.html  <- These "pages" must have unique names
+          index.html
+          Media
+          Scripts
+      andrew <- This is the folder to publish another student site to
+        index.html
+        andrew <- This is the site name in iWeb
+          feed.xml
+          La_Purisima_Concepcion_files <- These "pages" must have unique names
+          La_Purisima_Concepcion.html  <- These "pages" must have unique names
+          index.html
+          Media
+          Scripts
+     etc...   
+  
+4. When all the the subsites have been published, run the ruby script in
+a terminal window:
+
+$ ./merge_iweb_sites published_folder merged_folder
+
+The merged folder should contain all the pages in one site, with a dynamic
+navbar that links to all the pages.  The "Home" page will be the first
+page in the navbar.
+
+Notes:
+
+1. All the sites must be created using the same version of iWeb.
+
+2. Copy the "Media" and "Scripts" folders from a published iWeb project into 
+the "resources" folder of this project before running the script!
