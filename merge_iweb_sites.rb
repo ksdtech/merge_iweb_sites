@@ -10,6 +10,7 @@ class Merger
     @resources_dir = File.expand_path(File.join(File.dirname(__FILE__), 'resources'))
     @src_dir = options[:src_dir]
     @dest_dir = options[:dest_dir]
+    @site_name = options[:site_name] || 'Site'
     @home_page = (options[:home_page] || 'Home') + '.html'
     @home_dir = nil
   end
@@ -17,7 +18,9 @@ class Merger
   def find_home_page
     Find.find(@src_dir) do |path|
       if File.basename(path) == @home_page
-        @home_dir = File.expand_path(File.dirname(File.dirname(path)))
+        containing_dir = File.dirname(path)
+        raise "No index.html file in home (#{containing_dir})" unless File.exist?(File.join(containing_dir, 'index.html'))
+        @home_dir = File.expand_path(File.dirname(containing_dir))
         puts "Found home_dir #{@home_dir}"
         break
       end
@@ -42,7 +45,7 @@ END_FEED
   end
 
   def create_dest
-    @site_dir = File.join(@dest_dir, 'Site')
+    @site_dir = File.join(@dest_dir, @site_name)
     FileUtils.mkdir_p(@site_dir)
   end
 
@@ -84,10 +87,12 @@ END_FEED
     end
   end
   
-  def copy_page(sub_dir, feed_dir, page)
+  def copy_page(sub_dir, feed_dir, page, is_home_dir)
     # copy all the page files
     page_files = page.gsub(/\.html$/, '_files')
-    ['index.html', page, page_files].each do |fname|
+    entries_to_copy = [ page, page_files ]
+    entries_to_copy << 'index.html' if is_home_dir
+    entries_to_copy.each do |fname|
       src_entry = File.join(feed_dir, fname)
       dst_entry = File.join(@site_dir, fname)
       puts "copy #{src_entry} to #{dst_entry}"
@@ -100,7 +105,7 @@ END_FEED
     index_html_src = File.join(@home_dir, 'index.html')
     index_html_dst = File.join(@dest_dir, 'index.html')
     index_html_contents = File.open(index_html_src, 'r').read
-    index_html_contents.gsub!(/\"0\;url= ([^"]+)/, "\"0;url= Site/#{@home_page}")
+    index_html_contents.gsub!(/\"0\;url= ([^"]+)/, "\"0;url= #{@site_name}/#{@home_page}")
     File.open(index_html_dst, 'w') do |f|
       f.write(index_html_contents)
     end
@@ -119,7 +124,7 @@ END_FEED
         link = entry.xpath('./atom:link', 'atom' => 'http://www.w3.org/2005/Atom').first
         if link
           page = link['href']
-          copy_page(sub_dir, feed_dir, page)
+          copy_page(sub_dir, feed_dir, page, is_home_dir)
           # put home feed entry first
           first_entry = @nav_feed.root.at('entry')
           if is_home_dir && first_entry
@@ -152,10 +157,13 @@ end
 options = { }
 optparser = OptionParser.new do |opts|
   opts.banner = "Usage: merge_iweb_sites.rb [options] src_dir dest_dir"
-  opts.on("-h", "--home-page", "Name of home page (default 'Home')") do |h|
+  opts.on(:OPTIONAL, "-hHome", "--home-page=Home", "Name of source home page (default 'Home')") do |h|
     options[:home_page] = h
   end
-  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+  opts.on(:OPTIONAL, "-sSite", "--site-name=Site", "Name of destination site folder (default 'Site')") do |s|
+    options[:site_name] = s
+  end
+  opts.on(:OPTIONAL, "-v", "--[no-]verbose", "Run verbosely") do |v|
     options[:verbose] = v
   end
 end
@@ -168,4 +176,6 @@ end
 
 options[:src_dir] = ARGV[0]
 options[:dest_dir] = ARGV[1]
+puts "options: #{options.inspect}"
+
 Merger.new(options).merge_sites
