@@ -31,8 +31,9 @@ http://kentweb.kentfieldschools.org/teacherweb/jsterling/missions2011
 5. Open each individual student's .sites2 file by double-clicking.  Make
  sure that the names of the pages within all of the .sites2 projects
  are distinct--for a website on the missions, for example, name each
- page with the name of the mission. Then publish each entire site into a 
- new subfolder of the "published" folder named after the student.
+ page with the name of the mission. Rename the site to the student's
+ name. Then publish each entire site into a new subfolder of the 
+ "published" folder named after the student.
 
 Your "published" folder should look something like this:
 
